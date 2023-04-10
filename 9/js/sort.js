@@ -1,13 +1,13 @@
-import {compareRandom} from './functions.js';
+import {compareRandom} from './util.js';
 import {createThumbnail} from './thumbnail.js';
 
 const MAX_RANDOM_MINIATURES = 10;
 
 const sortContainer = document.querySelector('.img-filters');
 const defaultSort = document.querySelector('#filter-default');
-const btnSortForm = document.querySelector('.img-filters__form');
-const buttons = btnSortForm.children;
-const randomtSort = document.querySelector('#filter-random');
+const sortButton = document.querySelector('.img-filters__form');
+const buttons = sortButton.children;
+const randomSort = document.querySelector('#filter-random');
 const discussSort = document.querySelector('#filter-discussed');
 
 const activeSortClass = 'img-filters__button--active';
@@ -16,43 +16,39 @@ const showSorting = () => {
   sortContainer.classList.remove('img-filters--inactive');
 };
 
-const deletMiniatures = () => {
-  const personalMiniatures = document.querySelectorAll('.picture');
-  if (personalMiniatures) {
-    personalMiniatures.forEach((personalMiniature) => {
+const deleteThumbnail = () => {
+  const personalThumbnail = document.querySelectorAll('.picture');
+  if (personalThumbnail) {
+    personalThumbnail.forEach((personalMiniature) => {
       personalMiniature.remove();
     });
   }
 };
 
-const sortRandomMiniatures = (arr) => {
-  const newRandomMiniatures = arr.sort(compareRandom);
+const sortRandomThumbnail = (arr) => {
+  const newRandomThumbnail = arr.sort(compareRandom);
 
-  return newRandomMiniatures.slice(0, MAX_RANDOM_MINIATURES);
+  return newRandomThumbnail.slice(0, MAX_RANDOM_MINIATURES);
 };
 
-const sortDiscussMiniatures = (arr) => {
-  const discussMiniatures = arr.slice().sort((arrItemA, arrItemB) => arrItemB.comments.length - arrItemA.comments.length);
+const sortDiscussThumbnail = (arr) => arr.slice().sort((arrItemA, arrItemB) => arrItemB.comments.length - arrItemA.comments.length);
 
-  return discussMiniatures;
-};
-
-const generateDefaultMiniatures = (arr) => {
-  deletMiniatures();
+const generateDefaultThumbnail = (arr) => {
+  deleteThumbnail();
   createThumbnail(arr);
 };
 
-const generateRandomMiniatures = (arr) => {
-  deletMiniatures();
-  createThumbnail(sortRandomMiniatures(arr));
+const generateRandomThumbnail = (arr) => {
+  deleteThumbnail();
+  createThumbnail(sortRandomThumbnail(arr));
 };
 
-const generateDiscussMiniatures = (arr) => {
-  deletMiniatures();
-  createThumbnail(sortDiscussMiniatures(arr));
+const generateDiscussThumbnail = (arr) => {
+  deleteThumbnail();
+  createThumbnail(sortDiscussThumbnail(arr));
 };
 
-const setBtnClick = (cb) => {
+const setButtonClick = (cb) => {
   for (const btn of buttons) {
     btn.addEventListener('click', () => {
       cb(btn);
@@ -60,27 +56,27 @@ const setBtnClick = (cb) => {
   }
 };
 
-const reGenerateMiniatures = (arr, btn) => {
-  if (btn.id === 'filter-random') {
-    generateRandomMiniatures(arr);
-    randomtSort.classList.add(activeSortClass);
-    defaultSort.classList.remove(activeSortClass);
-    discussSort.classList.remove(activeSortClass);
-  }
-
-  if (btn.id === 'filter-discussed') {
-    generateDiscussMiniatures(arr);
-    discussSort.classList.add(activeSortClass);
-    defaultSort.classList.remove(activeSortClass);
-    randomtSort.classList.remove(activeSortClass);
-  }
-
-  if (btn.id === 'filter-default') {
-    generateDefaultMiniatures(arr);
-    defaultSort.classList.add(activeSortClass);
-    discussSort.classList.remove(activeSortClass);
-    randomtSort.classList.remove(activeSortClass);
+const reGenerateThumbnail = (arr, btn) => {
+  switch (btn.id) {
+    case 'filter-random': {
+      generateRandomThumbnail(arr);
+      randomSort.classList.add(activeSortClass);
+      defaultSort.classList.remove(activeSortClass);
+      discussSort.classList.remove(activeSortClass);
+    } break;
+    case 'filter-discussed': {
+      generateDiscussThumbnail(arr);
+      discussSort.classList.add(activeSortClass);
+      defaultSort.classList.remove(activeSortClass);
+      randomSort.classList.remove(activeSortClass);
+    } break;
+    case 'filter-default': {
+      generateDefaultThumbnail(arr);
+      defaultSort.classList.add(activeSortClass);
+      discussSort.classList.remove(activeSortClass);
+      randomSort.classList.remove(activeSortClass);
+    } break;
   }
 };
 
-export {showSorting, reGenerateMiniatures, setBtnClick};
+export {showSorting, reGenerateThumbnail, setButtonClick};
